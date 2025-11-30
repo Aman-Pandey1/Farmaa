@@ -72,6 +72,8 @@ export default {
     AUTH: {
       REGISTER: '/auth/register',
       LOGIN: '/auth/login',
+      SEND_OTP: '/auth/send-otp',
+      VERIFY_OTP: '/auth/verify-otp',
       ME: '/auth/me',
     },
     PRODUCTS: '/products',

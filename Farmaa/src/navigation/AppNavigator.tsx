@@ -10,6 +10,8 @@ import SplashScreen from '../screens/SplashScreen';
 import OnboardingScreen from '../screens/auth/OnboardingScreen';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
+import MobileLoginScreen from '../screens/auth/MobileLoginScreen';
+import OTPVerificationScreen from '../screens/auth/OTPVerificationScreen';
 
 // Main Screens
 import HomeScreen from '../screens/home/HomeScreen';
@@ -140,6 +142,8 @@ const AppNavigator = () => {
         {!isAuthenticated ? (
           <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            <Stack.Screen name="MobileLogin" component={MobileLoginScreen} />
+            <Stack.Screen name="OTPVerification" component={OTPVerificationScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>

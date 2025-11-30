@@ -6,10 +6,15 @@ import {
   ScrollView,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
+
+// Import images - agar images add ki hain to uncomment karein
+// import splash1 from '../../assets/images/splash1.png';
+// import splash2 from '../../assets/images/splash2.png';
 
 const OnboardingScreen = () => {
   const navigation = useNavigation();
@@ -19,31 +24,53 @@ const OnboardingScreen = () => {
   const slides = [
     {
       id: 1,
-      title: 'Welcome to Furmaa',
-      description: 'Your one-stop solution for all your pet needs',
-      image: '🐕',
-      color: '#FF6B6B',
+      title: 'Everything Your Pet Loves, Delivered',
+      description: 'Premium food, meds, toys & essentials - curated with care for your furry family',
+      image: '🦴✨',
+      color: '#FFFFFF',
+      emojis: '🐾✨',
     },
     {
       id: 2,
-      title: 'Shop Pet Products',
-      description: 'Find the best products for your furry friends',
-      image: '🛍️',
-      color: '#4ECDC4',
+      title: 'Train Smarter. Bond Better',
+      description: 'Expert-led videos that help your pet grow, behave, and thrive - one lesson at a time.',
+      image: '🎓',
+      color: '#FFFFFF',
+      emojis: '🖱️📹🐕',
     },
     {
       id: 3,
-      title: 'Book Services',
-      description: 'Grooming, training, and healthcare services',
-      image: '📅',
-      color: '#45B7D1',
+      title: 'Unleash the Fun - Pet Reels & Trending Moments!',
+      description: 'Watch adorable pet reels, share your pet\'s cutest moments, and join a community full of wagging tails & happy purrs.',
+      image: '🎬',
+      color: '#FFFFFF',
+      emojis: '🐾✨',
     },
     {
       id: 4,
-      title: 'Connect & Share',
-      description: 'Join a community of pet lovers',
-      image: '👥',
-      color: '#96CEB4',
+      title: 'Your Vet, Just a Tap Away',
+      description: 'Instant consultations, appointments, and health tracking to keep your pet safe and healthy.',
+      image: '🏥',
+      color: '#FFFFFF',
+      emojis: '👨‍⚕️📱',
+    },
+    {
+      id: 5,
+      title: 'Find Love, Find Home, Find Hope',
+      description: 'Adopt a pet, reunite the lost, and join a community built on compassion and care.',
+      image: '❤️',
+      color: '#FFFFFF',
+      emojis: '❤️🌿',
+      extraEmojis: '✨🐾',
+    },
+    {
+      id: 6,
+      title: 'Safe Stays for Happy Pets',
+      description: 'Find trusted hotels, hostels & NGOs for boarding, care, or shelter—anytime you need it.',
+      image: '🏠',
+      color: '#FFFFFF',
+      emojis: '🐕🐱🐾',
+      extraEmojis: '💛👆',
     },
   ];
 
@@ -59,19 +86,37 @@ const OnboardingScreen = () => {
         animated: true,
       });
     } else {
-      navigation.navigate('Login' as never);
+      // Navigate to mobile login after last slide
+      navigation.replace('MobileLogin' as never);
     }
   };
 
   const skip = () => {
-    navigation.navigate('Login' as never);
+    navigation.replace('MobileLogin' as never);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.skipButton} onPress={skip}>
-        <Text style={styles.skipText}>Skip</Text>
-      </TouchableOpacity>
+      {/* Header with Logo and Skip */}
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <View style={styles.headerLogo}>
+            <View style={styles.logoCircle}>
+              <View style={styles.logoInner}>
+                <View style={[styles.animalHead, styles.dogHead]} />
+                <View style={[styles.animalHead, styles.catHead]} />
+              </View>
+            </View>
+          </View>
+          <View style={styles.headerText}>
+            <Text style={styles.headerAppName}>FURRMAA</Text>
+            <Text style={styles.headerTagline}>WHERE EVERY TAIL FEELS AT HOME</Text>
+          </View>
+        </View>
+        <TouchableOpacity style={styles.skipButton} onPress={skip}>
+          <Text style={styles.skipText}>SKIP</Text>
+        </TouchableOpacity>
+      </View>
 
       <ScrollView
         ref={scrollViewRef}
@@ -83,15 +128,40 @@ const OnboardingScreen = () => {
       >
         {slides.map((slide) => (
           <View key={slide.id} style={[styles.slide, { backgroundColor: slide.color }]}>
+            {/* Main Image */}
             <View style={styles.imageContainer}>
-              <Text style={styles.emoji}>{slide.image}</Text>
+              {/* Agar image hai to use karein: */}
+              {/* <Image 
+                source={slide.imageSource} 
+                style={styles.slideImage}
+                resizeMode="contain"
+              /> */}
+              
+              {/* Temporary placeholder */}
+              <View style={styles.imagePlaceholder}>
+                <Text style={styles.placeholderEmoji}>{slide.image}</Text>
+              </View>
             </View>
-            <Text style={styles.title}>{slide.title}</Text>
-            <Text style={styles.description}>{slide.description}</Text>
+
+            {/* Content */}
+            <View style={styles.contentContainer}>
+              <Text style={styles.title}>
+                {slide.title}
+                {slide.emojis && <Text> {slide.emojis}</Text>}
+              </Text>
+              <Text style={styles.description}>
+                {slide.description}
+                {slide.extraEmojis && <Text> {slide.extraEmojis}</Text>}
+              </Text>
+              {slide.id === 2 && (
+                <Text style={styles.descriptionEmoji}>🐾❤️</Text>
+              )}
+            </View>
           </View>
         ))}
       </ScrollView>
 
+      {/* Footer with Pagination and Next Button */}
       <View style={styles.footer}>
         <View style={styles.pagination}>
           {slides.map((_, index) => (
@@ -107,7 +177,7 @@ const OnboardingScreen = () => {
 
         <TouchableOpacity style={styles.nextButton} onPress={goToNext}>
           <Text style={styles.nextButtonText}>
-            {currentPage === slides.length - 1 ? 'Get Started' : 'Next'}
+            {currentPage === slides.length - 1 ? 'Let\'s Start →' : 'Next →'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -118,83 +188,159 @@ const OnboardingScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  headerLogo: {
+    marginRight: 12,
+  },
+  logoCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 1.5,
+    borderColor: '#8B5CF6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  logoInner: {
+    width: 40,
+    height: 40,
+    position: 'relative',
+  },
+  animalHead: {
+    position: 'absolute',
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+  },
+  dogHead: {
+    backgroundColor: '#1E40AF',
+    left: 4,
+    top: 8,
+  },
+  catHead: {
+    backgroundColor: '#10B981',
+    right: 4,
+    top: 8,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerAppName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 2,
+  },
+  headerTagline: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontWeight: '300',
   },
   skipButton: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    zIndex: 1,
-    padding: 10,
+    padding: 8,
   },
   skipText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#9CA3AF',
+    fontSize: 14,
+    fontWeight: '500',
   },
   slide: {
     width,
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 40,
+    paddingTop: 20,
   },
   imageContainer: {
-    marginBottom: 40,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 30,
   },
-  emoji: {
-    fontSize: 120,
+  slideImage: {
+    width: width - 40,
+    height: 400,
+    borderRadius: 12,
+  },
+  imagePlaceholder: {
+    width: width - 40,
+    height: 400,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderEmoji: {
+    fontSize: 100,
+  },
+  contentContainer: {
+    paddingHorizontal: 30,
+    paddingBottom: 40,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginBottom: 20,
+    color: '#1F2937',
+    marginBottom: 15,
+    lineHeight: 36,
   },
   description: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    opacity: 0.9,
-    lineHeight: 26,
+    fontSize: 16,
+    color: '#6B7280',
+    lineHeight: 24,
+  },
+  descriptionEmoji: {
+    fontSize: 16,
+    marginTop: 8,
   },
   footer: {
-    position: 'absolute',
-    bottom: 50,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
+    paddingHorizontal: 30,
+    paddingBottom: 40,
+    paddingTop: 20,
   },
   pagination: {
     flexDirection: 'row',
+    justifyContent: 'center',
     marginBottom: 30,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FFFFFF',
-    opacity: 0.4,
+    backgroundColor: '#D1D5DB',
     marginHorizontal: 4,
   },
   activeDot: {
-    opacity: 1,
     width: 24,
+    backgroundColor: '#1F2937',
   },
   nextButton: {
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 40,
-    paddingVertical: 15,
+    backgroundColor: '#1F2937',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 30,
-    minWidth: 200,
     alignItems: 'center',
+    alignSelf: 'flex-end',
   },
   nextButtonText: {
-    color: '#FF6B6B',
-    fontSize: 18,
-    fontWeight: 'bold',
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 
 export default OnboardingScreen;
-

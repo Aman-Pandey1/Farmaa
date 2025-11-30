@@ -15,6 +15,8 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string, phone?: string) => Promise<void>;
+  sendOTP: (phone: string) => Promise<string>;
+  verifyOTP: (phone: string, otp: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
 }
@@ -132,6 +134,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const sendOTP = async (phone: string) => {
+    try {
+      console.log('📱 Sending OTP to:', phone);
+      const response = await api.CLIENT.post(api.ENDPOINTS.AUTH.SEND_OTP, {
+        phone,
+      });
+
+      console.log('✅ OTP sent:', response.data);
+      
+      // Return OTP for development (remove in production)
+      return response.data.otp || '';
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to send OTP';
+      console.error('❌ Send OTP error:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
+  const verifyOTP = async (phone: string, otp: string) => {
+    try {
+      console.log('🔐 Verifying OTP for:', phone);
+      const response = await api.CLIENT.post(api.ENDPOINTS.AUTH.VERIFY_OTP, {
+        phone,
+        otp,
+      });
+
+      console.log('✅ OTP verified:', response.data);
+
+      const { token: newToken, user: userData } = response.data;
+      
+      if (!newToken || !userData) {
+        throw new Error('Invalid response from server');
+      }
+      
+      setToken(newToken);
+      setUser(userData);
+      
+      await AsyncStorage.setItem('token', newToken);
+      await AsyncStorage.setItem('user', JSON.stringify(userData));
+      
+      api.CLIENT.defaults.headers.common.Authorization = `Bearer ${newToken}`;
+      
+      console.log('✅ OTP verification successful, token stored');
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'OTP verification failed';
+      console.error('❌ Verify OTP error:', errorMessage);
+      throw new Error(errorMessage);
+    }
+  };
+
   const logout = async () => {
     try {
       setToken(null);
@@ -152,6 +204,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         loading,
         login,
         register,
+        sendOTP,
+        verifyOTP,
         logout,
         isAuthenticated: !!token,
       }}

@@ -136,4 +136,138 @@ export const getMe = async (req, res) => {
   }
 };
 
+// @desc    Send OTP to mobile number
+// @route   POST /api/auth/send-otp
+// @access  Public
+export const sendOTP = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone || phone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid mobile number'
+      });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save OTP to database
+    const OTP = (await import('../models/OTP.model.js')).default;
+    await OTP.findOneAndUpdate(
+      { phone },
+      {
+        phone,
+        otp,
+        expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 minutes
+        verified: false,
+      },
+      { upsert: true, new: true }
+    );
+
+    // In production, send SMS via Twilio, AWS SNS, etc.
+    // For development, return OTP in response
+    console.log(`OTP for ${phone}: ${otp}`);
+
+    res.json({
+      success: true,
+      message: 'OTP sent successfully',
+      // Remove this in production
+      otp: process.env.NODE_ENV === 'development' ? otp : undefined,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Verify OTP and login/register
+// @route   POST /api/auth/verify-otp
+// @access  Public
+export const verifyOTP = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+
+    if (!phone || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide phone number and OTP'
+      });
+    }
+
+    // Find OTP
+    const OTP = (await import('../models/OTP.model.js')).default;
+    const otpRecord = await OTP.findOne({ phone, verified: false })
+      .sort({ createdAt: -1 });
+
+    if (!otpRecord) {
+      return res.status(400).json({
+        success: false,
+        message: 'OTP not found or already used'
+      });
+    }
+
+    // Check if OTP expired
+    if (new Date() > otpRecord.expiresAt) {
+      return res.status(400).json({
+        success: false,
+        message: 'OTP has expired'
+      });
+    }
+
+    // Verify OTP
+    if (otpRecord.otp !== otp) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid OTP'
+      });
+    }
+
+    // Mark OTP as verified
+    otpRecord.verified = true;
+    await otpRecord.save();
+
+    // Find or create user
+    let user = await User.findOne({ phone });
+
+    if (!user) {
+      // Create new user with phone number
+      user = await User.create({
+        name: `User ${phone.slice(-4)}`, // Temporary name
+        email: `${phone}@furmaa.com`, // Temporary email
+        password: Math.random().toString(36).slice(-8), // Random password
+        phone,
+        isVerified: true,
+      });
+    } else {
+      user.isVerified = true;
+      await user.save();
+    }
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id.toString(),
+        _id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 
