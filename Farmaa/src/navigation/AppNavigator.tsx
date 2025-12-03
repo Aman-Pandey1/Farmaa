@@ -44,6 +44,9 @@ import AdoptionFormScreen from '../screens/adoption/AdoptionFormScreen';
 import SocialFeedScreen from '../screens/social/SocialFeedScreen';
 import CreatePostScreen from '../screens/social/CreatePostScreen';
 
+// Explore Screen
+import ExploreScreen from '../screens/explore/ExploreScreen';
+
 // Profile Screens
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import EditProfileScreen from '../screens/profile/EditProfileScreen';
@@ -62,23 +65,16 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FF6B6B',
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: '#8B5CF6',
+        tabBarInactiveTintColor: '#9CA3AF',
         tabBarStyle: {
           paddingBottom: 5,
           paddingTop: 5,
           height: 60,
+          backgroundColor: '#FFFFFF',
         },
       }}
     >
-      <Tab.Screen 
-        name="HomeTab" 
-        component={HomeScreen}
-        options={{
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => <Icon name="home" size={24} color={color} />,
-        }}
-      />
       <Tab.Screen 
         name="ProductsTab" 
         component={ProductsScreen}
@@ -88,27 +84,35 @@ const MainTabs = () => {
         }}
       />
       <Tab.Screen 
-        name="ServicesTab" 
-        component={ServicesScreen}
+        name="ExploreTab" 
+        component={ExploreScreen}
         options={{
-          tabBarLabel: 'Services',
-          tabBarIcon: ({ color }) => <Icon name="calendar" size={24} color={color} />,
+          tabBarLabel: 'Explore',
+          tabBarIcon: ({ color }) => <Icon name="explore" size={24} color={color} />,
         }}
       />
       <Tab.Screen 
         name="SocialTab" 
         component={SocialFeedScreen}
         options={{
-          tabBarLabel: 'Social',
-          tabBarIcon: ({ color }) => <Icon name="users" size={24} color={color} />,
+          tabBarLabel: 'Feed',
+          tabBarIcon: ({ color }) => <Icon name="feed" size={24} color={color} />,
+        }}
+      />
+      <Tab.Screen 
+        name="VetTab" 
+        component={VeterinariansScreen}
+        options={{
+          tabBarLabel: 'Vet',
+          tabBarIcon: ({ color }) => <Icon name="vet" size={24} color={color} />,
         }}
       />
       <Tab.Screen 
         name="ProfileTab" 
         component={ProfileScreen}
         options={{
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => <Icon name="user" size={24} color={color} />,
+          tabBarLabel: 'More',
+          tabBarIcon: ({ color }) => <Icon name="more" size={24} color={color} />,
         }}
       />
     </Tab.Navigator>
@@ -118,11 +122,11 @@ const MainTabs = () => {
 // Simple icon component - using emoji for now
 const Icon = ({ name, size, color }: { name: string; size: number; color: string }) => {
   const iconMap: { [key: string]: string } = {
-    home: '🏠',
     'shopping-bag': '🛍️',
-    calendar: '📅',
-    users: '👥',
-    user: '👤',
+    explore: '🔍',
+    feed: '📱',
+    vet: '👨‍⚕️',
+    more: '☰',
   };
   return (
     <Text style={{ fontSize: size, color }}>{iconMap[name] || '•'}</Text>
@@ -132,13 +136,13 @@ const Icon = ({ name, size, color }: { name: string; size: number; color: string
 const AppNavigator = () => {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
-    return <SplashScreen />;
-  }
-
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator 
+        screenOptions={{ headerShown: false }}
+        initialRouteName={loading ? "Splash" : (!isAuthenticated ? "Splash" : "MainTabs")}
+      >
+        <Stack.Screen name="Splash" component={SplashScreen} />
         {!isAuthenticated ? (
           <>
             <Stack.Screen name="Onboarding" component={OnboardingScreen} />

@@ -1,139 +1,177 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  FlatList,
-  TextInput,
+  Dimensions,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import api from '../../config/api';
+
+// @ts-ignore
+import logoImage from '../../assets/images/Logo.png';
+
+const { width } = Dimensions.get('window');
 
 const ProductsScreen = () => {
   const navigation = useNavigation();
-  const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [selectedPet, setSelectedPet] = useState('dog');
 
-  const categories = [
-    { id: 'all', name: 'All' },
-    { id: 'food', name: 'Food' },
-    { id: 'toys', name: 'Toys' },
-    { id: 'accessories', name: 'Accessories' },
-    { id: 'grooming', name: 'Grooming' },
-    { id: 'health', name: 'Health' },
+  const quickCategories = [
+    { id: 1, name: 'Shop by Pet', icon: '🐾' },
+    { id: 2, name: 'Food', icon: '🍖' },
+    { id: 3, name: 'Medicine', icon: '💊' },
+    { id: 4, name: 'Toys', icon: '🎾' },
+    { id: 5, name: 'Accessories', icon: '🦴' },
+    { id: 6, name: 'Grooming', icon: '✂️' },
+    { id: 7, name: 'Training', icon: '🎓' },
   ];
 
-  useEffect(() => {
-    fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await api.CLIENT.get(api.ENDPOINTS.PRODUCTS, {
-        params: selectedCategory !== 'all' ? { category: selectedCategory } : {},
-      });
-      setProducts(response.data.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      // Mock data for development
-      setProducts([
-        { _id: '1', name: 'Premium Dog Food', price: 599, category: 'food', images: [] },
-        { _id: '2', name: 'Cat Toy Set', price: 299, category: 'toys', images: [] },
-        { _id: '3', name: 'Dog Leash', price: 399, category: 'accessories', images: [] },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const renderProduct = ({ item }: any) => (
-    <TouchableOpacity
-      style={styles.productCard}
-      onPress={() => navigation.navigate('ProductDetail' as never, { product: item } as never)}
-    >
-      <View style={styles.productImage}>
-        <Text style={styles.productEmoji}>
-          {item.category === 'food' ? '🦴' : item.category === 'toys' ? '🎾' : '🐕'}
-        </Text>
-      </View>
-      <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-      <View style={styles.productFooter}>
-        <Text style={styles.productPrice}>₹{item.price}</Text>
-        {item.discountPrice && (
-          <Text style={styles.originalPrice}>₹{item.discountPrice}</Text>
-        )}
-      </View>
-      {item.rating && (
-        <View style={styles.rating}>
-          <Text style={styles.ratingText}>⭐ {item.rating}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
-  );
+  const everydayEssentials = [
+    { id: 1, name: 'Food', icon: '🍽️' },
+    { id: 2, name: 'Treats', icon: '🦴' },
+    { id: 3, name: 'Diet', icon: '🥫' },
+    { id: 4, name: 'Supplements', icon: '💊' },
+    { id: 5, name: 'Toys', icon: '🎾' },
+    { id: 6, name: 'Grooming', icon: '✂️' },
+    { id: 7, name: 'Bowls', icon: '🥣' },
+    { id: 8, name: 'Premium', icon: '⭐' },
+  ];
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Products</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('Cart' as never)}>
-          <Text style={styles.cartIcon}>🛒</Text>
-        </TouchableOpacity>
+        <View style={styles.headerLeft}>
+          <View style={styles.logoContainer}>
+            <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
+          </View>
+          <View style={styles.headerText}>
+            <Text style={styles.headerAppName}>FLUFFMAA</Text>
+            <Text style={styles.headerTagline}>WE CARE FOR YOUR PETS AS FAMILY</Text>
+          </View>
+        </View>
+        <View style={styles.headerRight}>
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationIcon}>📍</Text>
+            <Text style={styles.locationText}>HONG KONG</Text>
+          </View>
+          <TouchableOpacity style={styles.iconButton}>
+            <Text style={styles.iconText}>🔔</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton}>
+            <Text style={styles.iconText}>☰</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search products..."
-          placeholderTextColor="#999"
-        />
-      </View>
-
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.categoriesContainer}
-        contentContainerStyle={styles.categoriesContent}
-      >
-        {categories.map((category) => (
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Pet Category Selector */}
+        <View style={styles.petSelectorContainer}>
           <TouchableOpacity
-            key={category.id}
             style={[
-              styles.categoryChip,
-              selectedCategory === category.id && styles.activeCategoryChip,
+              styles.petSelectorButton,
+              selectedPet === 'dog' && styles.petSelectorButtonActive,
             ]}
-            onPress={() => setSelectedCategory(category.id)}
+            onPress={() => setSelectedPet('dog')}
           >
             <Text
               style={[
-                styles.categoryChipText,
-                selectedCategory === category.id && styles.activeCategoryChipText,
+                styles.petSelectorText,
+                selectedPet === 'dog' && styles.petSelectorTextActive,
               ]}
             >
-              {category.name}
+              Dog Essentials
             </Text>
           </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <Text>Loading...</Text>
+          <TouchableOpacity
+            style={[
+              styles.petSelectorButton,
+              selectedPet === 'cat' && styles.petSelectorButtonActive,
+            ]}
+            onPress={() => setSelectedPet('cat')}
+          >
+            <Text
+              style={[
+                styles.petSelectorText,
+                selectedPet === 'cat' && styles.petSelectorTextActive,
+              ]}
+            >
+              Cat Essentials
+            </Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <FlatList
-          data={products}
-          renderItem={renderProduct}
-          keyExtractor={(item: any) => item._id}
-          numColumns={2}
-          contentContainerStyle={styles.productsList}
-          columnWrapperStyle={styles.row}
-        />
-      )}
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBox}>
+            <Text style={styles.searchPlaceholder}>
+              Search beyond food, toys, brands & more...
+            </Text>
+            <View style={styles.searchIcons}>
+              <TouchableOpacity style={styles.searchIconButton}>
+                <Text style={styles.searchIcon}>🎤</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.searchIconButton}>
+                <Text style={styles.searchIcon}>☰</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+
+        {/* Quick Access Categories */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.quickCategoriesContainer}
+          contentContainerStyle={styles.quickCategoriesContent}
+        >
+          {quickCategories.map((category) => (
+            <TouchableOpacity key={category.id} style={styles.quickCategoryItem}>
+              <View style={styles.quickCategoryIcon}>
+                <Text style={styles.quickCategoryIconText}>{category.icon}</Text>
+              </View>
+              <Text style={styles.quickCategoryText}>{category.name}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        {/* Promotional Banners */}
+        <View style={styles.bannersContainer}>
+          <View style={styles.mainBanner}>
+            <View style={styles.bannerGradient}>
+              <Text style={styles.bannerTitle}>MORE FOOD, MORE JOY, MORE TAIL WAGGING.</Text>
+              <Text style={styles.bannerSubtitle}>BUY 3 KG AND GET 1 KG FREE</Text>
+              <View style={styles.bannerDog}>
+                <Text style={styles.bannerDogEmoji}>🐕</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.sideBanner}>
+            <Text style={styles.sideBannerTitle}>TOP 3 DOG FO IN CANADA</Text>
+            <Text style={styles.sideBannerSubtitle}>
+              Discover what's best for your furry friend
+            </Text>
+          </View>
+        </View>
+
+        {/* Everyday Essentials */}
+        <View style={styles.essentialsContainer}>
+          <Text style={styles.essentialsTitle}>Everyday Essentials</Text>
+          <View style={styles.essentialsGrid}>
+            {everydayEssentials.map((item) => (
+              <TouchableOpacity key={item.id} style={styles.essentialItem}>
+                <View style={styles.essentialIcon}>
+                  <Text style={styles.essentialIconText}>{item.icon}</Text>
+                </View>
+                <Text style={styles.essentialText}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -141,118 +179,248 @@ const ProductsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  cartIcon: {
-    fontSize: 28,
-  },
-  searchContainer: {
-    padding: 15,
-    backgroundColor: '#FFFFFF',
-  },
-  searchInput: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 15,
-    fontSize: 16,
-  },
-  categoriesContainer: {
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 15,
-  },
-  categoriesContent: {
     paddingHorizontal: 15,
-  },
-  categoryChip: {
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
-    marginRight: 10,
-  },
-  activeCategoryChip: {
-    backgroundColor: '#FF6B6B',
-  },
-  categoryChipText: {
-    color: '#666',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  activeCategoryChipText: {
-    color: '#FFFFFF',
-  },
-  productsList: {
-    padding: 15,
-  },
-  row: {
-    justifyContent: 'space-between',
-  },
-  productCard: {
-    width: '48%',
+    paddingTop: 50,
+    paddingBottom: 15,
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 15,
-    marginBottom: 15,
   },
-  productImage: {
-    width: '100%',
-    height: 150,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  productEmoji: {
-    fontSize: 60,
-  },
-  productName: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  productFooter: {
+  headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    flex: 1,
   },
-  productPrice: {
+  logoContainer: {
+    marginRight: 12,
+  },
+  logoImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  headerText: {
+    flex: 1,
+  },
+  headerAppName: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FF6B6B',
-    marginRight: 8,
+    color: '#1F2937',
+    marginBottom: 2,
   },
-  originalPrice: {
+  headerTagline: {
+    fontSize: 10,
+    color: '#6B7280',
+    fontWeight: '300',
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  locationContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  locationIcon: {
     fontSize: 14,
-    color: '#999',
-    textDecorationLine: 'line-through',
   },
-  rating: {
-    marginTop: 5,
-  },
-  ratingText: {
+  locationText: {
     fontSize: 12,
-    color: '#666',
+    color: '#1F2937',
+    fontWeight: '500',
   },
-  loadingContainer: {
+  iconButton: {
+    padding: 5,
+  },
+  iconText: {
+    fontSize: 20,
+  },
+  petSelectorContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    gap: 10,
+  },
+  petSelectorButton: {
     flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    alignItems: 'center',
+  },
+  petSelectorButtonActive: {
+    backgroundColor: '#8B5CF6',
+    borderColor: '#8B5CF6',
+  },
+  petSelectorText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  petSelectorTextActive: {
+    color: '#FFFFFF',
+  },
+  searchContainer: {
+    paddingHorizontal: 15,
+    paddingBottom: 15,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  searchPlaceholder: {
+    flex: 1,
+    fontSize: 14,
+    color: '#9CA3AF',
+  },
+  searchIcons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  searchIconButton: {
+    padding: 5,
+  },
+  searchIcon: {
+    fontSize: 18,
+  },
+  quickCategoriesContainer: {
+    marginBottom: 20,
+  },
+  quickCategoriesContent: {
+    paddingHorizontal: 15,
+    gap: 15,
+  },
+  quickCategoryItem: {
+    alignItems: 'center',
+    width: 70,
+  },
+  quickCategoryIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#F9FAFB',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 8,
+  },
+  quickCategoryIconText: {
+    fontSize: 24,
+  },
+  quickCategoryText: {
+    fontSize: 12,
+    color: '#1F2937',
+    textAlign: 'center',
+  },
+  bannersContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    marginBottom: 25,
+    gap: 10,
+  },
+  mainBanner: {
+    flex: 2,
+    height: 180,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  bannerGradient: {
+    flex: 1,
+    backgroundColor: '#8B5CF6',
+    padding: 20,
+    justifyContent: 'space-between',
+    position: 'relative',
+  },
+  bannerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 8,
+  },
+  bannerSubtitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  bannerDog: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+  },
+  bannerDogEmoji: {
+    fontSize: 80,
+  },
+  sideBanner: {
+    flex: 1,
+    height: 180,
+    backgroundColor: '#FEF3C7',
+    borderRadius: 12,
+    padding: 15,
+    justifyContent: 'center',
+  },
+  sideBannerTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 8,
+  },
+  sideBannerSubtitle: {
+    fontSize: 12,
+    color: '#6B7280',
+    lineHeight: 18,
+  },
+  essentialsContainer: {
+    paddingHorizontal: 15,
+    paddingBottom: 100,
+  },
+  essentialsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 15,
+  },
+  essentialsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  essentialItem: {
+    width: (width - 45) / 4,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  essentialIcon: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#F9FAFB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  essentialIconText: {
+    fontSize: 24,
+  },
+  essentialText: {
+    fontSize: 12,
+    color: '#1F2937',
+    textAlign: 'center',
   },
 });
 
 export default ProductsScreen;
-

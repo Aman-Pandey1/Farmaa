@@ -9,9 +9,13 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
+
+// @ts-ignore
+import logoImage from '../../assets/images/Logo.png';
 
 const MobileLoginScreen = () => {
   const navigation = useNavigation();
@@ -28,7 +32,8 @@ const MobileLoginScreen = () => {
     setLoading(true);
     try {
       const otp = await sendOTP(mobileNumber);
-      navigation.navigate('OTPVerification' as never, { mobileNumber, devOtp: otp } as never);
+      // @ts-ignore
+      navigation.navigate('OTPVerification', { mobileNumber, devOtp: otp });
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {
@@ -56,16 +61,11 @@ const MobileLoginScreen = () => {
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <View style={styles.headerLogo}>
-              <View style={styles.logoCircle}>
-                <View style={styles.logoInner}>
-                  <View style={[styles.animalHead, styles.dogHead]} />
-                  <View style={[styles.animalHead, styles.catHead]} />
-                </View>
-              </View>
+              <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
             </View>
             <View style={styles.headerText}>
               <Text style={styles.headerAppName}>FURRMAA</Text>
-              <Text style={styles.headerTagline}>WHERE EVERY TAIL FEELS AT HOME</Text>
+              <Text style={styles.headerTagline}>WE CARE FOR YOUR PET WITH LOVE</Text>
             </View>
           </View>
         </View>
@@ -73,11 +73,11 @@ const MobileLoginScreen = () => {
         {/* Main Content */}
         <View style={styles.content}>
           <Text style={styles.mainTitle}>
-            Create Your Account <Text style={styles.pawPrint}>🐾</Text> or Login
+            Create Your Account<Text style={styles.asterisk}>*</Text> or Login
           </Text>
           
           <Text style={styles.description}>
-            Join Furmaa and give your pet the care they deserve. or Continue caring for your pet with ease <Text style={styles.pawPrint}>🐾</Text>
+            Join Furrmaa and give your pet the care they deserve or Continue caring for your pet with ease <Text style={styles.percent}>%</Text>
           </Text>
 
           {/* Mobile Number Input */}
@@ -93,7 +93,7 @@ const MobileLoginScreen = () => {
               maxLength={10}
             />
             <Text style={styles.helperText}>
-              We've sent a 6-digit verification code via SMS. 📱📦
+              We've sent a 6-digit verification code via SMS. ✉️
             </Text>
           </View>
 
@@ -160,36 +160,10 @@ const styles = StyleSheet.create({
   headerLogo: {
     marginRight: 12,
   },
-  logoCircle: {
+  logoImage: {
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 1.5,
-    borderColor: '#8B5CF6',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-  },
-  logoInner: {
-    width: 40,
-    height: 40,
-    position: 'relative',
-  },
-  animalHead: {
-    position: 'absolute',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-  },
-  dogHead: {
-    backgroundColor: '#1E40AF',
-    left: 4,
-    top: 8,
-  },
-  catHead: {
-    backgroundColor: '#10B981',
-    right: 4,
-    top: 8,
   },
   headerText: {
     flex: 1,
@@ -215,8 +189,13 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     lineHeight: 40,
   },
-  pawPrint: {
-    fontSize: 24,
+  asterisk: {
+    fontSize: 32,
+    color: '#1F2937',
+  },
+  percent: {
+    fontSize: 16,
+    color: '#6B7280',
   },
   description: {
     fontSize: 16,
@@ -302,16 +281,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   nextButton: {
-    backgroundColor: '#E5E7EB',
-    borderWidth: 1,
-    borderColor: '#1F2937',
+    backgroundColor: '#1F2937',
     paddingVertical: 18,
     borderRadius: 12,
     alignItems: 'center',
     marginBottom: 20,
   },
   nextButtonText: {
-    color: '#1F2937',
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
   },

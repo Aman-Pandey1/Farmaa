@@ -12,9 +12,21 @@ import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-// Import images - agar images add ki hain to uncomment karein
-// import splash1 from '../../assets/images/splash1.png';
-// import splash2 from '../../assets/images/splash2.png';
+// Import images
+// @ts-ignore
+import splash1 from '../../assets/images/pet 1.png';
+// @ts-ignore
+import splash2 from '../../assets/images/Group 9.png';
+// @ts-ignore
+import splash3 from '../../assets/images/Group 151.png';
+// @ts-ignore
+import splash4 from '../../assets/images/Group 15.png';
+// @ts-ignore
+import splash5 from '../../assets/images/Group 12.png';
+// @ts-ignore
+import splash6 from '../../assets/images/Group 11.png';
+// @ts-ignore
+import logoImage from '../../assets/images/Logo.png';
 
 const OnboardingScreen = () => {
   const navigation = useNavigation();
@@ -26,7 +38,7 @@ const OnboardingScreen = () => {
       id: 1,
       title: 'Everything Your Pet Loves, Delivered',
       description: 'Premium food, meds, toys & essentials - curated with care for your furry family',
-      image: '🦴✨',
+      image: splash1,
       color: '#FFFFFF',
       emojis: '🐾✨',
     },
@@ -34,7 +46,7 @@ const OnboardingScreen = () => {
       id: 2,
       title: 'Train Smarter. Bond Better',
       description: 'Expert-led videos that help your pet grow, behave, and thrive - one lesson at a time.',
-      image: '🎓',
+      image: splash2,
       color: '#FFFFFF',
       emojis: '🖱️📹🐕',
     },
@@ -42,7 +54,7 @@ const OnboardingScreen = () => {
       id: 3,
       title: 'Unleash the Fun - Pet Reels & Trending Moments!',
       description: 'Watch adorable pet reels, share your pet\'s cutest moments, and join a community full of wagging tails & happy purrs.',
-      image: '🎬',
+      image: splash3,
       color: '#FFFFFF',
       emojis: '🐾✨',
     },
@@ -50,7 +62,7 @@ const OnboardingScreen = () => {
       id: 4,
       title: 'Your Vet, Just a Tap Away',
       description: 'Instant consultations, appointments, and health tracking to keep your pet safe and healthy.',
-      image: '🏥',
+      image: splash4,
       color: '#FFFFFF',
       emojis: '👨‍⚕️📱',
     },
@@ -58,7 +70,7 @@ const OnboardingScreen = () => {
       id: 5,
       title: 'Find Love, Find Home, Find Hope',
       description: 'Adopt a pet, reunite the lost, and join a community built on compassion and care.',
-      image: '❤️',
+      image: splash5,
       color: '#FFFFFF',
       emojis: '❤️🌿',
       extraEmojis: '✨🐾',
@@ -67,7 +79,7 @@ const OnboardingScreen = () => {
       id: 6,
       title: 'Safe Stays for Happy Pets',
       description: 'Find trusted hotels, hostels & NGOs for boarding, care, or shelter—anytime you need it.',
-      image: '🏠',
+      image: splash6,
       color: '#FFFFFF',
       emojis: '🐕🐱🐾',
       extraEmojis: '💛👆',
@@ -87,12 +99,14 @@ const OnboardingScreen = () => {
       });
     } else {
       // Navigate to mobile login after last slide
-      navigation.replace('MobileLogin' as never);
+      // @ts-ignore
+      navigation.replace('MobileLogin');
     }
   };
 
   const skip = () => {
-    navigation.replace('MobileLogin' as never);
+    // @ts-ignore
+    navigation.replace('MobileLogin');
   };
 
   return (
@@ -101,12 +115,7 @@ const OnboardingScreen = () => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={styles.headerLogo}>
-            <View style={styles.logoCircle}>
-              <View style={styles.logoInner}>
-                <View style={[styles.animalHead, styles.dogHead]} />
-                <View style={[styles.animalHead, styles.catHead]} />
-              </View>
-            </View>
+            <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
           </View>
           <View style={styles.headerText}>
             <Text style={styles.headerAppName}>FURRMAA</Text>
@@ -125,22 +134,17 @@ const OnboardingScreen = () => {
         showsHorizontalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        style={styles.scrollView}
       >
         {slides.map((slide) => (
           <View key={slide.id} style={[styles.slide, { backgroundColor: slide.color }]}>
             {/* Main Image */}
             <View style={styles.imageContainer}>
-              {/* Agar image hai to use karein: */}
-              {/* <Image 
-                source={slide.imageSource} 
+              <Image 
+                source={slide.image} 
                 style={styles.slideImage}
                 resizeMode="contain"
-              /> */}
-              
-              {/* Temporary placeholder */}
-              <View style={styles.imagePlaceholder}>
-                <Text style={styles.placeholderEmoji}>{slide.image}</Text>
-              </View>
+              />
             </View>
 
             {/* Content */}
@@ -259,37 +263,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
+  scrollView: {
+    flex: 1,
+  },
   slide: {
     width,
     flex: 1,
-    paddingTop: 20,
   },
   imageContainer: {
-    flex: 1,
+    width: '100%',
+    height: 320,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 30,
+    paddingTop: 10,
   },
   slideImage: {
-    width: width - 40,
-    height: 400,
+    width: '100%',
+    height: '100%',
     borderRadius: 12,
-  },
-  imagePlaceholder: {
-    width: width - 40,
-    height: 400,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  placeholderEmoji: {
-    fontSize: 100,
   },
   contentContainer: {
     paddingHorizontal: 30,
+    paddingTop: 15,
     paddingBottom: 40,
+    minHeight: 150,
+  },
+  logoImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   title: {
     fontSize: 28,
@@ -302,6 +305,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6B7280',
     lineHeight: 24,
+    marginBottom: 10,
   },
   descriptionEmoji: {
     fontSize: 16,
@@ -311,6 +315,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingBottom: 40,
     paddingTop: 20,
+    backgroundColor: '#FFFFFF',
   },
   pagination: {
     flexDirection: 'row',

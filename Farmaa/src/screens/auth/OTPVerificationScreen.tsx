@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Alert } from 'react-native';
 import {
   View,
   Text,

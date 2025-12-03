@@ -155,6 +155,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const verifyOTP = async (phone: string, otp: string) => {
     try {
       console.log('🔐 Verifying OTP for:', phone);
+      
+      // Development bypass - any 6-digit OTP works
+      if (__DEV__ && otp.length === 6) {
+        console.log('✅ Development mode: OTP bypassed');
+        const mockToken = 'dev_token_' + Date.now();
+        const mockUser = {
+          id: 'dev_user_1',
+          name: 'Dev User',
+          email: phone + '@dev.com',
+          role: 'user',
+        };
+        
+        setToken(mockToken);
+        setUser(mockUser);
+        
+        await AsyncStorage.setItem('token', mockToken);
+        await AsyncStorage.setItem('user', JSON.stringify(mockUser));
+        
+        api.CLIENT.defaults.headers.common.Authorization = `Bearer ${mockToken}`;
+        
+        console.log('✅ Development OTP verification successful');
+        return;
+      }
+      
       const response = await api.CLIENT.post(api.ENDPOINTS.AUTH.VERIFY_OTP, {
         phone,
         otp,

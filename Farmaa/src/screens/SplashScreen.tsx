@@ -4,13 +4,17 @@ import {
   Text,
   StyleSheet,
   Animated,
+  Image,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
 
-// Import images - agar images add ki hain to uncomment karein
-// import splash1 from '../assets/images/splash1.png';
-// import splash2 from '../assets/images/splash2.png';
+// @ts-ignore
+import logoImage from '../assets/images/Logo.png';
 
 const SplashScreen = () => {
+  const navigation = useNavigation();
+  const { isAuthenticated, loading } = useAuth();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.5)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
@@ -35,7 +39,22 @@ const SplashScreen = () => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [fadeAnim, scaleAnim, slideAnim]);
+
+    // Navigate after 2 seconds and when loading is complete
+    if (!loading) {
+      const timer = setTimeout(() => {
+        if (isAuthenticated) {
+          // @ts-ignore
+          navigation.replace('MainTabs');
+        } else {
+          // @ts-ignore
+          navigation.replace('Onboarding');
+        }
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [fadeAnim, scaleAnim, slideAnim, navigation, loading, isAuthenticated]);
 
   return (
     <View style={styles.container}>
@@ -51,26 +70,13 @@ const SplashScreen = () => {
           },
         ]}
       >
-        {/* Logo Image - agar splash1.png add ki hai to use karein */}
+        {/* Logo Image */}
         <View style={styles.logoContainer}>
-          {/* Temporary logo - replace with actual image */}
-          <View style={styles.logoCircle}>
-            <View style={styles.logoInner}>
-              {/* Dog head - left */}
-              <View style={[styles.animalHead, styles.dogHead]} />
-              {/* Cat head - right */}
-              <View style={[styles.animalHead, styles.catHead]} />
-              {/* Bird head - bottom */}
-              <View style={[styles.animalHead, styles.birdHead]} />
-            </View>
-          </View>
-          
-          {/* Agar image hai to use karein: */}
-          {/* <Image 
-            source={splash1} 
+          <Image 
+            source={logoImage} 
             style={styles.logoImage}
             resizeMode="contain"
-          /> */}
+          />
         </View>
 
         {/* App Name */}
@@ -102,51 +108,6 @@ const styles = StyleSheet.create({
   logoContainer: {
     marginBottom: 40,
     alignItems: 'center',
-  },
-  logoCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 2,
-    borderColor: '#8B5CF6', // Purple border
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    marginBottom: 30,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  logoInner: {
-    width: 100,
-    height: 100,
-    position: 'relative',
-  },
-  animalHead: {
-    position: 'absolute',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  dogHead: {
-    backgroundColor: '#1E40AF', // Dark blue
-    left: 10,
-    top: 20,
-  },
-  catHead: {
-    backgroundColor: '#10B981', // Light green
-    right: 10,
-    top: 20,
-  },
-  birdHead: {
-    backgroundColor: '#8B5CF6', // Purple
-    left: 30,
-    bottom: 10,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
   },
   logoImage: {
     width: 120,
