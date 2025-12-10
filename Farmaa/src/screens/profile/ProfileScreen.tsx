@@ -45,7 +45,17 @@ const ProfileScreen = () => {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+      <TouchableOpacity 
+        style={styles.logoutButton} 
+        onPress={async () => {
+          await logout();
+          // @ts-ignore
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Splash' }],
+          });
+        }}
+      >
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
     </ScrollView>

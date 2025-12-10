@@ -3,6 +3,7 @@ import { Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 
 // Auth Screens
@@ -61,6 +62,8 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MainTabs = () => {
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tab.Navigator
       screenOptions={{
@@ -68,9 +71,9 @@ const MainTabs = () => {
         tabBarActiveTintColor: '#8B5CF6',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarStyle: {
-          paddingBottom: 5,
+          paddingBottom: Math.max(insets.bottom, 10),
           paddingTop: 5,
-          height: 60,
+          height: 60 + Math.max(insets.bottom - 10, 0),
           backgroundColor: '#FFFFFF',
         },
       }}

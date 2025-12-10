@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  TextInput,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -18,27 +19,53 @@ const { width } = Dimensions.get('window');
 const ProductsScreen = () => {
   const navigation = useNavigation();
   const [selectedPet, setSelectedPet] = useState('dog');
+  const [selectedCategory, setSelectedCategory] = useState('Shop by Pet');
+
+  // Mock product data
+  const dogProducts = [
+    { id: 1, name: 'Dog Food', price: '11,999$', rating: 4.5, image: '🦴' },
+    { id: 2, name: 'Dog Treats', price: '5,999$', rating: 4.2, image: '🍖' },
+    { id: 3, name: 'Dog Toy', price: '2,999$', rating: 4.8, image: '🎾' },
+    { id: 4, name: 'Dog Collar', price: '1,999$', rating: 4.3, image: '🦴' },
+    { id: 5, name: 'Dog Bed', price: '8,999$', rating: 4.6, image: '🛏️' },
+    { id: 6, name: 'Dog Shampoo', price: '1,499$', rating: 4.4, image: '🧴' },
+    { id: 7, name: 'Dog Leash', price: '1,299$', rating: 4.7, image: '🦮' },
+    { id: 8, name: 'Dog Bowl', price: '999$', rating: 4.5, image: '🥣' },
+  ];
+
+  const catProducts = [
+    { id: 1, name: 'Cat Food', price: '9,999$', rating: 4.6, image: '🐟' },
+    { id: 2, name: 'Cat Treats', price: '4,999$', rating: 4.3, image: '🍣' },
+    { id: 3, name: 'Cat Toy', price: '2,499$', rating: 4.9, image: '🐭' },
+    { id: 4, name: 'Cat Collar', price: '1,799$', rating: 4.2, image: '🔔' },
+    { id: 5, name: 'Cat Bed', price: '7,999$', rating: 4.5, image: '🛏️' },
+    { id: 6, name: 'Cat Litter', price: '3,999$', rating: 4.4, image: '📦' },
+    { id: 7, name: 'Cat Scratcher', price: '5,999$', rating: 4.8, image: '🌳' },
+    { id: 8, name: 'Cat Bowl', price: '899$', rating: 4.6, image: '🥣' },
+  ];
 
   const quickCategories = [
     { id: 1, name: 'Shop by Pet', icon: '🐾' },
-    { id: 2, name: 'Food', icon: '🍖' },
+    { id: 2, name: 'Food', icon: selectedPet === 'dog' ? '🦴' : '🐟' },
     { id: 3, name: 'Medicine', icon: '💊' },
-    { id: 4, name: 'Toys', icon: '🎾' },
-    { id: 5, name: 'Accessories', icon: '🦴' },
+    { id: 4, name: 'Toys', icon: selectedPet === 'dog' ? '🎾' : '🐭' },
+    { id: 5, name: 'Accessories', icon: selectedPet === 'dog' ? '🦴' : '🔔' },
     { id: 6, name: 'Grooming', icon: '✂️' },
     { id: 7, name: 'Training', icon: '🎓' },
   ];
 
   const everydayEssentials = [
-    { id: 1, name: 'Food', icon: '🍽️' },
-    { id: 2, name: 'Treats', icon: '🦴' },
+    { id: 1, name: 'Food', icon: selectedPet === 'dog' ? '🦴' : '🐟' },
+    { id: 2, name: 'Treats', icon: selectedPet === 'dog' ? '🍖' : '🍣' },
     { id: 3, name: 'Diet', icon: '🥫' },
     { id: 4, name: 'Supplements', icon: '💊' },
-    { id: 5, name: 'Toys', icon: '🎾' },
+    { id: 5, name: 'Toys', icon: selectedPet === 'dog' ? '🎾' : '🐭' },
     { id: 6, name: 'Grooming', icon: '✂️' },
     { id: 7, name: 'Bowls', icon: '🥣' },
     { id: 8, name: 'Premium', icon: '⭐' },
   ];
+
+  const products = selectedPet === 'dog' ? dogProducts : catProducts;
 
   return (
     <View style={styles.container}>
@@ -49,7 +76,7 @@ const ProductsScreen = () => {
             <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
           </View>
           <View style={styles.headerText}>
-            <Text style={styles.headerAppName}>FLUFFMAA</Text>
+            <Text style={styles.headerAppName}>FURRMAA</Text>
             <Text style={styles.headerTagline}>WE CARE FOR YOUR PETS AS FAMILY</Text>
           </View>
         </View>
@@ -63,8 +90,8 @@ const ProductsScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton}>
             <Text style={styles.iconText}>☰</Text>
-          </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
+      </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -107,9 +134,11 @@ const ProductsScreen = () => {
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <View style={styles.searchBox}>
-            <Text style={styles.searchPlaceholder}>
-              Search beyond food, toys, brands & more...
-            </Text>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search for products..."
+              placeholderTextColor="#9CA3AF"
+            />
             <View style={styles.searchIcons}>
               <TouchableOpacity style={styles.searchIconButton}>
                 <Text style={styles.searchIcon}>🎤</Text>
@@ -129,37 +158,57 @@ const ProductsScreen = () => {
           contentContainerStyle={styles.quickCategoriesContent}
         >
           {quickCategories.map((category) => (
-            <TouchableOpacity key={category.id} style={styles.quickCategoryItem}>
-              <View style={styles.quickCategoryIcon}>
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.quickCategoryItem,
+                selectedCategory === category.name && styles.quickCategoryItemActive,
+              ]}
+              onPress={() => setSelectedCategory(category.name)}
+            >
+              <View
+                style={[
+                  styles.quickCategoryIcon,
+                  selectedCategory === category.name && styles.quickCategoryIconActive,
+                ]}
+              >
                 <Text style={styles.quickCategoryIconText}>{category.icon}</Text>
               </View>
-              <Text style={styles.quickCategoryText}>{category.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Promotional Banners */}
-        <View style={styles.bannersContainer}>
-          <View style={styles.mainBanner}>
-            <View style={styles.bannerGradient}>
-              <Text style={styles.bannerTitle}>MORE FOOD, MORE JOY, MORE TAIL WAGGING.</Text>
-              <Text style={styles.bannerSubtitle}>BUY 3 KG AND GET 1 KG FREE</Text>
-              <View style={styles.bannerDog}>
-                <Text style={styles.bannerDogEmoji}>🐕</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.sideBanner}>
-            <Text style={styles.sideBannerTitle}>TOP 3 DOG FO IN CANADA</Text>
-            <Text style={styles.sideBannerSubtitle}>
-              Discover what's best for your furry friend
+              <Text
+                style={[
+                  styles.quickCategoryText,
+                  selectedCategory === category.name && styles.quickCategoryTextActive,
+                ]}
+              >
+                {category.name}
             </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+        {/* Promotional Banner */}
+        <View style={styles.bannerContainer}>
+          <View style={styles.mainBanner}>
+            <Text style={styles.bannerText}>Get 1 Back on every 500$</Text>
+            <Text style={styles.bannerSubtext}>
+              {selectedPet === 'dog' ? '🐕' : '🐱'} Special Offer
+            </Text>
+          </View>
+        </View>
+
+        {/* Training Banners */}
+        <View style={styles.trainingBannersContainer}>
+          <View style={styles.trainingBanner}>
+            <Text style={styles.trainingBannerTitle}>
+              {selectedPet === 'dog' ? 'Dog' : 'Cat'} Training
+            </Text>
+            <Text style={styles.trainingBannerSubtitle}>Expert Training Programs</Text>
           </View>
         </View>
 
         {/* Everyday Essentials */}
         <View style={styles.essentialsContainer}>
-          <Text style={styles.essentialsTitle}>Everyday Essentials</Text>
+          <Text style={styles.sectionTitle}>Everyday Essentials</Text>
           <View style={styles.essentialsGrid}>
             {everydayEssentials.map((item) => (
               <TouchableOpacity key={item.id} style={styles.essentialItem}>
@@ -171,6 +220,84 @@ const ProductsScreen = () => {
             ))}
           </View>
         </View>
+
+        {/* Product Grid - All New Releases */}
+        <View style={styles.productsContainer}>
+          <Text style={styles.sectionTitle}>All New Releases</Text>
+          <View style={styles.productsGrid}>
+            {products.slice(0, 4).map((product) => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => navigation.navigate('ProductDetail' as never)}
+              >
+                <View style={styles.productImage}>
+                  <Text style={styles.productEmoji}>{product.image}</Text>
+                </View>
+                <Text style={styles.productName} numberOfLines={2}>
+                  {product.name}
+                </Text>
+                <View style={styles.productRating}>
+                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
+                </View>
+                <Text style={styles.productPrice}>{product.price}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Specially Curated */}
+        <View style={styles.productsContainer}>
+          <Text style={styles.sectionTitle}>Specially Curated</Text>
+          <View style={styles.productsGrid}>
+            {products.slice(4, 8).map((product) => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => navigation.navigate('ProductDetail' as never)}
+              >
+                <View style={styles.productImage}>
+                  <Text style={styles.productEmoji}>{product.image}</Text>
+                </View>
+                <Text style={styles.productName} numberOfLines={2}>
+                  {product.name}
+                </Text>
+                <View style={styles.productRating}>
+                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
+                </View>
+                <Text style={styles.productPrice}>{product.price}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* New Arrivals */}
+        <View style={styles.productsContainer}>
+          <Text style={styles.sectionTitle}>New Arrivals</Text>
+          <View style={styles.productsGrid}>
+            {products.slice(0, 4).map((product) => (
+              <TouchableOpacity
+                key={`new-${product.id}`}
+                style={styles.productCard}
+                onPress={() => navigation.navigate('ProductDetail' as never)}
+              >
+                <View style={styles.productImage}>
+                  <Text style={styles.productEmoji}>{product.image}</Text>
+                </View>
+                <Text style={styles.productName} numberOfLines={2}>
+                  {product.name}
+                </Text>
+                <View style={styles.productRating}>
+                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
+                </View>
+                <Text style={styles.productPrice}>{product.price}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Bottom Padding */}
+        <View style={styles.bottomPadding} />
       </ScrollView>
     </View>
   );
@@ -284,10 +411,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  searchPlaceholder: {
+  searchInput: {
     flex: 1,
     fontSize: 14,
-    color: '#9CA3AF',
+    color: '#1F2937',
   },
   searchIcons: {
     flexDirection: 'row',
@@ -310,6 +437,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 70,
   },
+  quickCategoryItemActive: {
+    // Active state styling
+  },
   quickCategoryIcon: {
     width: 60,
     height: 60,
@@ -319,6 +449,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
+  quickCategoryIconActive: {
+    backgroundColor: '#8B5CF6',
+  },
   quickCategoryIconText: {
     fontSize: 24,
   },
@@ -327,68 +460,59 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     textAlign: 'center',
   },
-  bannersContainer: {
-    flexDirection: 'row',
+  quickCategoryTextActive: {
+    color: '#8B5CF6',
+    fontWeight: '600',
+  },
+  bannerContainer: {
     paddingHorizontal: 15,
-    marginBottom: 25,
-    gap: 10,
+    marginBottom: 15,
   },
   mainBanner: {
-    flex: 2,
-    height: 180,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  bannerGradient: {
-    flex: 1,
+    width: '100%',
+    height: 120,
     backgroundColor: '#8B5CF6',
-    padding: 20,
-    justifyContent: 'space-between',
-    position: 'relative',
-  },
-  bannerTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  bannerSubtitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  bannerDog: {
-    position: 'absolute',
-    right: 10,
-    bottom: 10,
-  },
-  bannerDogEmoji: {
-    fontSize: 80,
-  },
-  sideBanner: {
-    flex: 1,
-    height: 180,
-    backgroundColor: '#FEF3C7',
     borderRadius: 12,
-    padding: 15,
+    padding: 20,
     justifyContent: 'center',
   },
-  sideBannerTitle: {
+  bannerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+    marginBottom: 5,
+  },
+  bannerSubtext: {
     fontSize: 14,
+    color: '#FFFFFF',
+  },
+  trainingBannersContainer: {
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+  trainingBanner: {
+    width: '100%',
+    height: 100,
+    backgroundColor: '#FEF3C7',
+    borderRadius: 12,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  trainingBannerTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#1F2937',
-    marginBottom: 8,
+    marginBottom: 5,
   },
-  sideBannerSubtitle: {
-    fontSize: 12,
+  trainingBannerSubtitle: {
+    fontSize: 14,
     color: '#6B7280',
-    lineHeight: 18,
   },
   essentialsContainer: {
     paddingHorizontal: 15,
-    paddingBottom: 100,
+    marginBottom: 25,
   },
-  essentialsTitle: {
+  sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#1F2937',
@@ -420,6 +544,58 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#1F2937',
     textAlign: 'center',
+  },
+  productsContainer: {
+    paddingHorizontal: 15,
+    marginBottom: 25,
+  },
+  productsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  productCard: {
+    width: (width - 45) / 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  productImage: {
+    width: '100%',
+    height: 120,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  productEmoji: {
+    fontSize: 50,
+  },
+  productName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 5,
+    minHeight: 36,
+  },
+  productRating: {
+    marginBottom: 5,
+  },
+  ratingText: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  productPrice: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  bottomPadding: {
+    height: 100,
   },
 });
 

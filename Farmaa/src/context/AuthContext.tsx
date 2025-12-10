@@ -137,6 +137,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const sendOTP = async (phone: string) => {
     try {
       console.log('📱 Sending OTP to:', phone);
+      
+      // Development bypass - any 10-digit number works
+      if (__DEV__ && phone.length === 10) {
+        console.log('✅ Development mode: OTP bypassed');
+        // Return a mock OTP (any 6 digits will work in verifyOTP)
+        return '123456';
+      }
+      
       const response = await api.CLIENT.post(api.ENDPOINTS.AUTH.SEND_OTP, {
         phone,
       });
