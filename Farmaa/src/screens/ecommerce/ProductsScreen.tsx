@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,299 +6,442 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
-  Image,
   TextInput,
+  Modal,
+  FlatList,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-
-// @ts-ignore
-import logoImage from '../../assets/images/Logo.png';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
+interface Product {
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string;
+  discount?: number;
+  rating: number;
+  reviews: number;
+  image: string;
+  category?: string;
+  inCart?: boolean;
+  quantity?: number;
+}
+
 const ProductsScreen = () => {
   const navigation = useNavigation();
-  const [selectedPet, setSelectedPet] = useState('dog');
-  const [selectedCategory, setSelectedCategory] = useState('Shop by Pet');
+  const route = useRoute();
+  const routeParams = (route.params as any) || {};
 
-  // Mock product data
-  const dogProducts = [
-    { id: 1, name: 'Dog Food', price: '11,999$', rating: 4.5, image: '🦴' },
-    { id: 2, name: 'Dog Treats', price: '5,999$', rating: 4.2, image: '🍖' },
-    { id: 3, name: 'Dog Toy', price: '2,999$', rating: 4.8, image: '🎾' },
-    { id: 4, name: 'Dog Collar', price: '1,999$', rating: 4.3, image: '🦴' },
-    { id: 5, name: 'Dog Bed', price: '8,999$', rating: 4.6, image: '🛏️' },
-    { id: 6, name: 'Dog Shampoo', price: '1,499$', rating: 4.4, image: '🧴' },
-    { id: 7, name: 'Dog Leash', price: '1,299$', rating: 4.7, image: '🦮' },
-    { id: 8, name: 'Dog Bowl', price: '999$', rating: 4.5, image: '🥣' },
+  const [selectedPet, setSelectedPet] = useState<'dog' | 'cat'>(
+    routeParams.petType || 'dog'
+  );
+  const [searchQuery, setSearchQuery] = useState(routeParams.searchQuery || '');
+  const [showSortModal, setShowSortModal] = useState(false);
+  const [sortBy, setSortBy] = useState('Popularity');
+  const [filters, setFilters] = useState(routeParams.filters || {});
+  const [favorites, setFavorites] = useState<{ [key: number]: boolean }>({});
+
+  // Mock product data - matching design
+  const allProducts: Product[] = [
+    {
+      id: 1,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 2,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 3,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 4,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 5,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 6,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 7,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 8,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
+    {
+      id: 9,
+      name: 'Canine Creek Club Ultra Premium Dry',
+      price: '₹2,229',
+      originalPrice: '₹2,449',
+      rating: 4.6,
+      reviews: 265,
+      image: '🦴',
+      category: 'Food',
+    },
   ];
 
-  const catProducts = [
-    { id: 1, name: 'Cat Food', price: '9,999$', rating: 4.6, image: '🐟' },
-    { id: 2, name: 'Cat Treats', price: '4,999$', rating: 4.3, image: '🍣' },
-    { id: 3, name: 'Cat Toy', price: '2,499$', rating: 4.9, image: '🐭' },
-    { id: 4, name: 'Cat Collar', price: '1,799$', rating: 4.2, image: '🔔' },
-    { id: 5, name: 'Cat Bed', price: '7,999$', rating: 4.5, image: '🛏️' },
-    { id: 6, name: 'Cat Litter', price: '3,999$', rating: 4.4, image: '📦' },
-    { id: 7, name: 'Cat Scratcher', price: '5,999$', rating: 4.8, image: '🌳' },
-    { id: 8, name: 'Cat Bowl', price: '899$', rating: 4.6, image: '🥣' },
+  const [products, setProducts] = useState<Product[]>(allProducts);
+  const [cartItems, setCartItems] = useState<{ [key: number]: number }>({});
+
+  useEffect(() => {
+    let filtered = [...allProducts];
+
+    // Apply search filter
+    if (searchQuery) {
+      filtered = filtered.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Apply category filter
+    if (filters.category && filters.category.length > 0) {
+      filtered = filtered.filter((product) =>
+        filters.category.includes(product.category)
+      );
+    }
+
+    // Apply sort
+    switch (sortBy) {
+      case 'Price: Low to High':
+        filtered.sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[₹,]/g, ''));
+          const priceB = parseInt(b.price.replace(/[₹,]/g, ''));
+          return priceA - priceB;
+        });
+        break;
+      case 'Price: High to Low':
+        filtered.sort((a, b) => {
+          const priceA = parseInt(a.price.replace(/[₹,]/g, ''));
+          const priceB = parseInt(b.price.replace(/[₹,]/g, ''));
+          return priceB - priceA;
+        });
+        break;
+      case 'New Arrivals':
+        filtered.reverse();
+        break;
+      default:
+        // Popularity - sort by rating
+        filtered.sort((a, b) => b.rating - a.rating);
+    }
+
+    setProducts(filtered);
+  }, [searchQuery, filters, sortBy]);
+
+  const handleAddToCart = (productId: number) => {
+    setCartItems((prev) => ({
+      ...prev,
+      [productId]: (prev[productId] || 0) + 1,
+    }));
+  };
+
+  const handleQuantityChange = (productId: number, change: number) => {
+    setCartItems((prev) => {
+      const newQuantity = (prev[productId] || 0) + change;
+      if (newQuantity <= 0) {
+        const newItems = { ...prev };
+        delete newItems[productId];
+        return newItems;
+      }
+      return { ...prev, [productId]: newQuantity };
+    });
+  };
+
+  const toggleFavorite = (productId: number) => {
+    setFavorites((prev) => ({
+      ...prev,
+      [productId]: !prev[productId],
+    }));
+  };
+
+  const sortOptions = [
+    'Popularity',
+    'New Arrivals',
+    'Price: Low to High',
+    'Price: High to Low',
   ];
 
-  const quickCategories = [
-    { id: 1, name: 'Shop by Pet', icon: '🐾' },
-    { id: 2, name: 'Food', icon: selectedPet === 'dog' ? '🦴' : '🐟' },
-    { id: 3, name: 'Medicine', icon: '💊' },
-    { id: 4, name: 'Toys', icon: selectedPet === 'dog' ? '🎾' : '🐭' },
-    { id: 5, name: 'Accessories', icon: selectedPet === 'dog' ? '🦴' : '🔔' },
-    { id: 6, name: 'Grooming', icon: '✂️' },
-    { id: 7, name: 'Training', icon: '🎓' },
-  ];
-
-  const everydayEssentials = [
-    { id: 1, name: 'Food', icon: selectedPet === 'dog' ? '🦴' : '🐟' },
-    { id: 2, name: 'Treats', icon: selectedPet === 'dog' ? '🍖' : '🍣' },
-    { id: 3, name: 'Diet', icon: '🥫' },
-    { id: 4, name: 'Supplements', icon: '💊' },
-    { id: 5, name: 'Toys', icon: selectedPet === 'dog' ? '🎾' : '🐭' },
-    { id: 6, name: 'Grooming', icon: '✂️' },
-    { id: 7, name: 'Bowls', icon: '🥣' },
-    { id: 8, name: 'Premium', icon: '⭐' },
-  ];
-
-  const products = selectedPet === 'dog' ? dogProducts : catProducts;
+  const hasItemsInCart = Object.keys(cartItems).length > 0;
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <View style={styles.logoContainer}>
-            <Image source={logoImage} style={styles.logoImage} resizeMode="contain" />
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.headerAppName}>FURRMAA</Text>
-            <Text style={styles.headerTagline}>WE CARE FOR YOUR PETS AS FAMILY</Text>
-          </View>
-        </View>
-        <View style={styles.headerRight}>
-          <View style={styles.locationContainer}>
-            <Text style={styles.locationIcon}>📍</Text>
-            <Text style={styles.locationText}>HONG KONG</Text>
-          </View>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>🔔</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Text style={styles.backIcon}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Dog Food</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      {/* Search and Filter Bar */}
+      <View style={styles.searchFilterBar}>
+        <View style={styles.searchBox}>
+          <Text style={styles.searchIcon}>🔍</Text>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search food"
+            placeholderTextColor="#9CA3AF"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          <TouchableOpacity style={styles.micButton}>
+            <Text style={styles.micIcon}>🎤</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}>
-            <Text style={styles.iconText}>☰</Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => setShowSortModal(true)}
+          style={styles.iconButton}
+        >
+          <Text style={styles.sortIcon}>⇅</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('Filter' as never, { filters } as never)
+          }
+          style={styles.iconButton}
+        >
+          <Text style={styles.filterIcon}>☰</Text>
         </TouchableOpacity>
       </View>
-      </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Pet Category Selector */}
-        <View style={styles.petSelectorContainer}>
+      {/* Products Grid */}
+      {products.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyTitle}>Your Pet's Wishlist Is Waiting</Text>
+          <Text style={styles.emptyDescription}>
+            Browse essentials, treats, and toys curated to keep tails wagging.
+            Because every good pet deserves something extra good.
+          </Text>
           <TouchableOpacity
-            style={[
-              styles.petSelectorButton,
-              selectedPet === 'dog' && styles.petSelectorButtonActive,
-            ]}
-            onPress={() => setSelectedPet('dog')}
+            style={styles.emptyButton}
+            onPress={() => {
+              setSearchQuery('');
+              setFilters({});
+            }}
           >
-            <Text
-              style={[
-                styles.petSelectorText,
-                selectedPet === 'dog' && styles.petSelectorTextActive,
-              ]}
-            >
-              Dog Essentials
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.petSelectorButton,
-              selectedPet === 'cat' && styles.petSelectorButtonActive,
-            ]}
-            onPress={() => setSelectedPet('cat')}
-          >
-            <Text
-              style={[
-                styles.petSelectorText,
-                selectedPet === 'cat' && styles.petSelectorTextActive,
-              ]}
-            >
-              Cat Essentials
-            </Text>
+            <Text style={styles.emptyButtonText}>Try Again →</Text>
           </TouchableOpacity>
         </View>
+      ) : (
+        <FlatList
+          data={products}
+          numColumns={3}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.productsGrid}
+          renderItem={({ item }) => {
+          const quantity = cartItems[item.id] || 0;
+          const inCart = quantity > 0;
 
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBox}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search for products..."
-              placeholderTextColor="#9CA3AF"
-            />
-            <View style={styles.searchIcons}>
-              <TouchableOpacity style={styles.searchIconButton}>
-                <Text style={styles.searchIcon}>🎤</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.searchIconButton}>
-                <Text style={styles.searchIcon}>☰</Text>
+          return (
+            <TouchableOpacity
+              style={styles.productCard}
+              onPress={() =>
+                navigation.navigate('ProductDetail' as never, {
+                  product: {
+                    ...item,
+                    name: 'Canine Creek Club Ultra Premium Dry Dog Food for All Lifestages, 20 kg Pack',
+                    brand: 'Canine Creek',
+                    unitCount: '200000 gram',
+                    numberOfItems: 1,
+                    itemWeight: '10000 Grams',
+                    brandName: 'Canine Creek',
+                    flavor: 'Pumpkin',
+                    ageRange: 'Adult',
+                    itemForm: 'Dry',
+                    specialIngredients: 'Krill oil, Salmon Oil, Beta Carotene',
+                    asin: 'SDCINFM02',
+                    itemHSN: '70100000',
+                    pricePerUnit: '₹19.49/100 g',
+                    discount: 15,
+                  },
+                } as never)
+              }
+            >
+              <View style={styles.productImage}>
+                <TouchableOpacity
+                  style={styles.heartButton}
+                  onPress={() => toggleFavorite(item.id)}
+                >
+                  <Text style={styles.heartIcon}>
+                    {favorites[item.id] ? '❤️' : '🤍'}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={styles.productEmoji}>{item.image}</Text>
+              </View>
+              {!inCart ? (
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={() => handleAddToCart(item.id)}
+                >
+                  <Text style={styles.addButtonText}>ADD</Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={styles.quantityContainer}>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleQuantityChange(item.id, -1)}
+                  >
+                    <Text style={styles.quantityButtonText}>-</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.quantityText}>{quantity}</Text>
+                  <TouchableOpacity
+                    style={styles.quantityButton}
+                    onPress={() => handleQuantityChange(item.id, 1)}
+                  >
+                    <Text style={styles.quantityButtonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              <Text style={styles.productName} numberOfLines={2}>
+                {item.name}
+              </Text>
+              <View style={styles.productRating}>
+                <Text style={styles.ratingStars}>
+                  {'⭐'.repeat(Math.floor(item.rating))}
+                </Text>
+                <Text style={styles.reviewsText}>
+                  {item.rating} | {item.reviews}
+                </Text>
+              </View>
+              <View style={styles.priceContainer}>
+                <Text style={styles.productPrice}>{item.price}</Text>
+                {item.originalPrice && (
+                  <Text style={styles.originalPrice}>{item.originalPrice}</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+      />
+      )}
+
+      {/* Go to Cart Button */}
+      {products.length > 0 && hasItemsInCart && (
+        <View style={styles.cartButton}>
+          <Text style={styles.cartTotal}>
+            ₹{Object.keys(cartItems).reduce((total, productId) => {
+              const product = products.find((p) => p.id === parseInt(productId));
+              const qty = cartItems[parseInt(productId)];
+              const price = parseInt(product?.price.replace(/[₹,]/g, '') || '0');
+              return total + price * qty;
+            }, 0).toLocaleString('en-IN')}
+          </Text>
+          <TouchableOpacity
+            style={styles.goToCartButton}
+            onPress={() => navigation.navigate('Cart' as never)}
+          >
+            <Text style={styles.goToCartButtonText}>Go to Cart +</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Sort Modal */}
+      <Modal
+        visible={showSortModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowSortModal(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowSortModal(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Sort By</Text>
+              <TouchableOpacity onPress={() => setShowSortModal(false)}>
+                <View style={styles.closeButton}>
+                  <Text style={styles.closeIcon}>✕</Text>
+                </View>
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
-
-        {/* Quick Access Categories */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.quickCategoriesContainer}
-          contentContainerStyle={styles.quickCategoriesContent}
-        >
-          {quickCategories.map((category) => (
-            <TouchableOpacity
-              key={category.id}
-              style={[
-                styles.quickCategoryItem,
-                selectedCategory === category.name && styles.quickCategoryItemActive,
-              ]}
-              onPress={() => setSelectedCategory(category.name)}
-            >
-              <View
-                style={[
-                  styles.quickCategoryIcon,
-                  selectedCategory === category.name && styles.quickCategoryIconActive,
-                ]}
-              >
-                <Text style={styles.quickCategoryIconText}>{category.icon}</Text>
-              </View>
-              <Text
-                style={[
-                  styles.quickCategoryText,
-                  selectedCategory === category.name && styles.quickCategoryTextActive,
-                ]}
-              >
-                {category.name}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-        {/* Promotional Banner */}
-        <View style={styles.bannerContainer}>
-          <View style={styles.mainBanner}>
-            <Text style={styles.bannerText}>Get 1 Back on every 500$</Text>
-            <Text style={styles.bannerSubtext}>
-              {selectedPet === 'dog' ? '🐕' : '🐱'} Special Offer
-            </Text>
-          </View>
-        </View>
-
-        {/* Training Banners */}
-        <View style={styles.trainingBannersContainer}>
-          <View style={styles.trainingBanner}>
-            <Text style={styles.trainingBannerTitle}>
-              {selectedPet === 'dog' ? 'Dog' : 'Cat'} Training
-            </Text>
-            <Text style={styles.trainingBannerSubtitle}>Expert Training Programs</Text>
-          </View>
-        </View>
-
-        {/* Everyday Essentials */}
-        <View style={styles.essentialsContainer}>
-          <Text style={styles.sectionTitle}>Everyday Essentials</Text>
-          <View style={styles.essentialsGrid}>
-            {everydayEssentials.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.essentialItem}>
-                <View style={styles.essentialIcon}>
-                  <Text style={styles.essentialIconText}>{item.icon}</Text>
-                </View>
-                <Text style={styles.essentialText}>{item.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Product Grid - All New Releases */}
-        <View style={styles.productsContainer}>
-          <Text style={styles.sectionTitle}>All New Releases</Text>
-          <View style={styles.productsGrid}>
-            {products.slice(0, 4).map((product) => (
+            {sortOptions.map((option) => (
               <TouchableOpacity
-                key={product.id}
-                style={styles.productCard}
-                onPress={() => navigation.navigate('ProductDetail' as never)}
+                key={option}
+                style={styles.sortOption}
+                onPress={() => {
+                  setSortBy(option);
+                  setShowSortModal(false);
+                }}
               >
-                <View style={styles.productImage}>
-                  <Text style={styles.productEmoji}>{product.image}</Text>
-                </View>
-                <Text style={styles.productName} numberOfLines={2}>
-                  {product.name}
+                <Text
+                  style={[
+                    styles.sortOptionText,
+                    sortBy === option && styles.sortOptionTextSelected,
+                  ]}
+                >
+                  {option}
                 </Text>
-                <View style={styles.productRating}>
-                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
-                </View>
-                <Text style={styles.productPrice}>{product.price}</Text>
+                {sortBy === option && (
+                  <View style={styles.radioSelected}>
+                    <View style={styles.radioInner} />
+                  </View>
+                )}
               </TouchableOpacity>
             ))}
           </View>
-        </View>
-
-        {/* Specially Curated */}
-        <View style={styles.productsContainer}>
-          <Text style={styles.sectionTitle}>Specially Curated</Text>
-          <View style={styles.productsGrid}>
-            {products.slice(4, 8).map((product) => (
-              <TouchableOpacity
-                key={product.id}
-                style={styles.productCard}
-                onPress={() => navigation.navigate('ProductDetail' as never)}
-              >
-                <View style={styles.productImage}>
-                  <Text style={styles.productEmoji}>{product.image}</Text>
-                </View>
-                <Text style={styles.productName} numberOfLines={2}>
-                  {product.name}
-                </Text>
-                <View style={styles.productRating}>
-                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
-                </View>
-                <Text style={styles.productPrice}>{product.price}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* New Arrivals */}
-        <View style={styles.productsContainer}>
-          <Text style={styles.sectionTitle}>New Arrivals</Text>
-          <View style={styles.productsGrid}>
-            {products.slice(0, 4).map((product) => (
-              <TouchableOpacity
-                key={`new-${product.id}`}
-                style={styles.productCard}
-                onPress={() => navigation.navigate('ProductDetail' as never)}
-              >
-                <View style={styles.productImage}>
-                  <Text style={styles.productEmoji}>{product.image}</Text>
-                </View>
-                <Text style={styles.productName} numberOfLines={2}>
-                  {product.name}
-                </Text>
-                <View style={styles.productRating}>
-                  <Text style={styles.ratingText}>⭐ {product.rating}</Text>
-                </View>
-                <Text style={styles.productPrice}>{product.price}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Bottom Padding */}
-        <View style={styles.bottomPadding} />
-      </ScrollView>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 };
@@ -310,292 +453,321 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 15,
+    justifyContent: 'space-between',
     paddingTop: 50,
+    paddingHorizontal: 15,
     paddingBottom: 15,
     backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  logoContainer: {
-    marginRight: 12,
-  },
-  logoImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  headerText: {
-    flex: 1,
-  },
-  headerAppName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 2,
-  },
-  headerTagline: {
-    fontSize: 10,
-    color: '#6B7280',
-    fontWeight: '300',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  locationIcon: {
-    fontSize: 14,
-  },
-  locationText: {
-    fontSize: 12,
-    color: '#1F2937',
-    fontWeight: '500',
-  },
-  iconButton: {
+  backButton: {
     padding: 5,
   },
-  iconText: {
-    fontSize: 20,
+  backIcon: {
+    fontSize: 24,
+    color: '#1F2937',
   },
-  petSelectorContainer: {
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  placeholder: {
+    width: 34,
+  },
+  searchFilterBar: {
     flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 15,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
     gap: 10,
   },
-  petSelectorButton: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    alignItems: 'center',
-  },
-  petSelectorButtonActive: {
-    backgroundColor: '#8B5CF6',
-    borderColor: '#8B5CF6',
-  },
-  petSelectorText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6B7280',
-  },
-  petSelectorTextActive: {
-    color: '#FFFFFF',
-  },
-  searchContainer: {
-    paddingHorizontal: 15,
-    paddingBottom: 15,
-  },
   searchBox: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     backgroundColor: '#F9FAFB',
     borderRadius: 12,
     paddingHorizontal: 15,
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: '#E5E7EB',
+  },
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 10,
+    color: '#6B7280',
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
     color: '#1F2937',
   },
-  searchIcons: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  searchIconButton: {
+  micButton: {
+    marginLeft: 10,
     padding: 5,
   },
-  searchIcon: {
+  micIcon: {
     fontSize: 18,
-  },
-  quickCategoriesContainer: {
-    marginBottom: 20,
-  },
-  quickCategoriesContent: {
-    paddingHorizontal: 15,
-    gap: 15,
-  },
-  quickCategoryItem: {
-    alignItems: 'center',
-    width: 70,
-  },
-  quickCategoryItemActive: {
-    // Active state styling
-  },
-  quickCategoryIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#F9FAFB',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  quickCategoryIconActive: {
-    backgroundColor: '#8B5CF6',
-  },
-  quickCategoryIconText: {
-    fontSize: 24,
-  },
-  quickCategoryText: {
-    fontSize: 12,
-    color: '#1F2937',
-    textAlign: 'center',
-  },
-  quickCategoryTextActive: {
-    color: '#8B5CF6',
-    fontWeight: '600',
-  },
-  bannerContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 15,
-  },
-  mainBanner: {
-    width: '100%',
-    height: 120,
-    backgroundColor: '#8B5CF6',
-    borderRadius: 12,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  bannerText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 5,
-  },
-  bannerSubtext: {
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
-  trainingBannersContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 20,
-  },
-  trainingBanner: {
-    width: '100%',
-    height: 100,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 12,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  trainingBannerTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 5,
-  },
-  trainingBannerSubtitle: {
-    fontSize: 14,
     color: '#6B7280',
   },
-  essentialsContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 25,
+  iconButton: {
+    padding: 10,
   },
-  sectionTitle: {
+  sortIcon: {
     fontSize: 20,
-    fontWeight: 'bold',
     color: '#1F2937',
-    marginBottom: 15,
   },
-  essentialsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  essentialItem: {
-    width: (width - 45) / 4,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  essentialIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#F9FAFB',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  essentialIconText: {
-    fontSize: 24,
-  },
-  essentialText: {
-    fontSize: 12,
+  filterIcon: {
+    fontSize: 20,
     color: '#1F2937',
-    textAlign: 'center',
-  },
-  productsContainer: {
-    paddingHorizontal: 15,
-    marginBottom: 25,
   },
   productsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    padding: 10,
+    paddingBottom: 100,
   },
   productCard: {
-    width: (width - 45) / 2,
+    width: (width - 40) / 3,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    padding: 10,
-    marginBottom: 15,
+    padding: 8,
+    margin: 5,
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
   productImage: {
     width: '100%',
-    height: 120,
+    height: 100,
     backgroundColor: '#F9FAFB',
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
+    position: 'relative',
+  },
+  heartButton: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    zIndex: 1,
+    padding: 4,
+  },
+  heartIcon: {
+    fontSize: 18,
   },
   productEmoji: {
     fontSize: 50,
   },
-  productName: {
+  addButton: {
+    backgroundColor: '#3B82F6',
+    paddingVertical: 6,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  addButtonText: {
+    fontSize: 11,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  quantityContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+    gap: 10,
+  },
+  quantityButton: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#F9FAFB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  quantityButtonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 5,
-    minHeight: 36,
-  },
-  productRating: {
-    marginBottom: 5,
-  },
-  ratingText: {
-    fontSize: 12,
-    color: '#6B7280',
-  },
-  productPrice: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#1F2937',
   },
-  bottomPadding: {
-    height: 100,
+  quantityText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  productName: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 4,
+    minHeight: 32,
+  },
+  productRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    gap: 4,
+  },
+  ratingStars: {
+    fontSize: 10,
+  },
+  reviewsText: {
+    fontSize: 10,
+    color: '#6B7280',
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  productPrice: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  originalPrice: {
+    fontSize: 10,
+    color: '#9CA3AF',
+    textDecorationLine: 'line-through',
+  },
+  cartButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 15,
+    right: 15,
+    backgroundColor: '#1F2937',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cartTotal: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  goToCartButton: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  goToCartButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 40,
+    paddingTop: 100,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  emptyDescription: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  emptyButton: {
+    backgroundColor: '#1F2937',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  emptyButtonText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#6B7280',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 40,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  closeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F9FAFB',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeIcon: {
+    fontSize: 18,
+    color: '#6B7280',
+  },
+  sortOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  sortOptionText: {
+    fontSize: 16,
+    color: '#1F2937',
+  },
+  sortOptionTextSelected: {
+    fontWeight: '600',
+    color: '#3B82F6',
+  },
+  radioSelected: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#3B82F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#3B82F6',
   },
 });
 

@@ -18,7 +18,15 @@ import OTPVerificationScreen from '../screens/auth/OTPVerificationScreen';
 import HomeScreen from '../screens/home/HomeScreen';
 import ProductsScreen from '../screens/ecommerce/ProductsScreen';
 import ProductDetailScreen from '../screens/ecommerce/ProductDetailScreen';
+import SearchScreen from '../screens/ecommerce/SearchScreen';
+import FilterScreen from '../screens/ecommerce/FilterScreen';
 import CartScreen from '../screens/ecommerce/CartScreen';
+import AddressScreen from '../screens/ecommerce/AddressScreen';
+import PaymentSuccessScreen from '../screens/ecommerce/PaymentSuccessScreen';
+import PaymentFailedScreen from '../screens/ecommerce/PaymentFailedScreen';
+import OrderDetailScreen from '../screens/ecommerce/OrderDetailScreen';
+import OrderUpdateScreen from '../screens/ecommerce/OrderUpdateScreen';
+import ReturnOrderScreen from '../screens/ecommerce/ReturnOrderScreen';
 import CheckoutScreen from '../screens/ecommerce/CheckoutScreen';
 
 // Service Screens
@@ -80,7 +88,7 @@ const MainTabs = () => {
     >
       <Tab.Screen 
         name="ProductsTab" 
-        component={ProductsScreen}
+        component={HomeScreen}
         options={{
           tabBarLabel: 'Shop',
           tabBarIcon: ({ color }) => <Icon name="shopping-bag" size={24} color={color} />,
@@ -157,9 +165,19 @@ const AppNavigator = () => {
         ) : (
           <>
             <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen name="Products" component={ProductsScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="Filter" component={FilterScreen} />
             <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
             <Stack.Screen name="Cart" component={CartScreen} />
+            <Stack.Screen name="Address" component={AddressScreen} />
+            <Stack.Screen name="PaymentSuccess" component={PaymentSuccessScreen} />
+            <Stack.Screen name="PaymentFailed" component={PaymentFailedScreen} />
+            <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+            <Stack.Screen name="OrderUpdate" component={OrderUpdateScreen} />
+            <Stack.Screen name="ReturnOrder" component={ReturnOrderScreen} />
             <Stack.Screen name="Checkout" component={CheckoutScreen} />
+            <Stack.Screen name="Orders" component={OrdersScreen} />
             <Stack.Screen name="ServiceProviders" component={ServiceProvidersScreen} />
             <Stack.Screen name="Booking" component={BookingScreen} />
             <Stack.Screen name="MyBookings" component={MyBookingsScreen} />
@@ -172,7 +190,6 @@ const AppNavigator = () => {
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="MyPets" component={MyPetsScreen} />
             <Stack.Screen name="AddPet" component={AddPetScreen} />
-            <Stack.Screen name="Orders" component={OrdersScreen} />
             <Stack.Screen name="Emergency" component={EmergencyScreen} />
             <Stack.Screen name="Healthcare" component={HealthcareScreen} />
             <Stack.Screen name="Training" component={TrainingScreen} />
