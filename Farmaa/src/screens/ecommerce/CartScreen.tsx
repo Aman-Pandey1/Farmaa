@@ -7,16 +7,19 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const CartScreen = () => {
   const navigation = useNavigation();
-  const [quantity, setQuantity] = useState(0);
+  const route = useRoute();
+  const { product, quantity: initialQuantity } = (route.params as any) || {};
+  
+  const [quantity, setQuantity] = useState(initialQuantity || 1);
   const [couponCode, setCouponCode] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
 
-  // Mock cart data - empty by default for demo
-  const cartItem = {
+  // Use product from navigation params or default
+  const cartItem = product || {
     id: 1,
     name: 'Canine Creek Club Ultra Premium Dry Dog Food for All Lifestages, 20 kg Pack',
     price: 2229,

@@ -204,7 +204,7 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={[
               styles.tabButton,
-              selectedPet === 'dog' && [styles.tabButtonActive, { backgroundColor: '#3B82F6', borderColor: '#3B82F6' }],
+              selectedPet === 'dog' && [styles.tabButtonActive, { backgroundColor: '#1E3A8A', borderColor: '#1E3A8A' }],
             ]}
             onPress={() => setSelectedPet('dog')}
           >
@@ -583,8 +583,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   tabButtonActive: {
-    backgroundColor: '#3B82F6', // Blue for dog, will be overridden for cat
-    borderColor: '#3B82F6',
+    backgroundColor: '#1E3A8A', // Navy blue for dog, will be overridden for cat
+    borderColor: '#1E3A8A',
   },
   tabText: {
     fontSize: 16,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   },
   mainBanner: {
     height: 160,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     borderRadius: 12,
     padding: 20,
     flexDirection: 'row',
@@ -744,7 +744,7 @@ const styles = StyleSheet.create({
   bannerButtonText: {
     fontSize: 12,
     fontWeight: 'bold',
-    color: '#3B82F6',
+    color: '#1E3A8A',
   },
   bannerImage: {
     width: 80,
@@ -807,7 +807,7 @@ const styles = StyleSheet.create({
   seeAllText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#3B82F6',
+    color: '#1E3A8A',
   },
   essentialsGrid: {
     flexDirection: 'row',
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 25,
     height: 120,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     borderRadius: 12,
     padding: 20,
     flexDirection: 'row',
@@ -998,7 +998,7 @@ const styles = StyleSheet.create({
     color: '#1F2937',
   },
   addButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 6,
@@ -1012,7 +1012,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 25,
     height: 100,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     borderRadius: 12,
     padding: 20,
     flexDirection: 'row',

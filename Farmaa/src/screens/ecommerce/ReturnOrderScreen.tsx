@@ -213,13 +213,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   radioSelected: {
-    borderColor: '#3B82F6',
+    borderColor: '#1E3A8A',
   },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
   },
   reasonText: {
     fontSize: 14,

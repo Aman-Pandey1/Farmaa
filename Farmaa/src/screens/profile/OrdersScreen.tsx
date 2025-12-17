@@ -55,7 +55,7 @@ const OrdersScreen = () => {
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'ongoing':
-        return '#3B82F6';
+        return '#1E3A8A';
       case 'delivered':
         return '#10B981';
       case 'cancelled':
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   statusTextBlue: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#3B82F6',
+    color: '#1E3A8A',
   },
   statusArrow: {
     fontSize: 12,
@@ -446,14 +446,14 @@ const styles = StyleSheet.create({
   },
   filterOptionTextSelected: {
     fontWeight: '600',
-    color: '#3B82F6',
+    color: '#1E3A8A',
   },
   radioSelected: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#3B82F6',
+    borderColor: '#1E3A8A',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
   },
 });
 

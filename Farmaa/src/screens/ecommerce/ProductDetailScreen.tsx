@@ -268,8 +268,10 @@ const ProductDetailScreen = () => {
           <TouchableOpacity
             style={styles.addToCartButton}
             onPress={() => {
-              setQuantity(1);
-              addToCart();
+              navigation.navigate('Cart' as never, {
+                product: productData,
+                quantity: quantity,
+              } as never);
             }}
           >
             <Text style={styles.addToCartText}>Add to Cart</Text>

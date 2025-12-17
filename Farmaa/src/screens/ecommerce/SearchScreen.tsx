@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through',
   },
   addButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',

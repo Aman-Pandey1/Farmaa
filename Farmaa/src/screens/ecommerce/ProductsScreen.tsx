@@ -184,10 +184,25 @@ const ProductsScreen = () => {
   }, [searchQuery, filters, sortBy]);
 
   const handleAddToCart = (productId: number) => {
-    setCartItems((prev) => ({
-      ...prev,
-      [productId]: (prev[productId] || 0) + 1,
-    }));
+    const product = filteredProducts.find((p) => p.id === productId);
+    if (product) {
+      const newQuantity = (cartItems[productId] || 0) + 1;
+      setCartItems((prev) => ({
+        ...prev,
+        [productId]: newQuantity,
+      }));
+      // Navigate to cart after adding
+      navigation.navigate('Cart' as never, {
+        product: {
+          ...product,
+          price: parseInt(product.price.replace(/[₹,]/g, '')),
+          originalPrice: product.originalPrice
+            ? parseInt(product.originalPrice.replace(/[₹,]/g, ''))
+            : undefined,
+        },
+        quantity: newQuantity,
+      } as never);
+    }
   };
 
   const handleQuantityChange = (productId: number, change: number) => {
@@ -564,7 +579,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
   addButton: {
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
     paddingVertical: 6,
     borderRadius: 6,
     alignItems: 'center',
@@ -752,14 +767,14 @@ const styles = StyleSheet.create({
   },
   sortOptionTextSelected: {
     fontWeight: '600',
-    color: '#3B82F6',
+    color: '#1E3A8A',
   },
   radioSelected: {
     width: 20,
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: '#3B82F6',
+    borderColor: '#1E3A8A',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -767,7 +782,7 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#1E3A8A',
   },
 });
 

@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   },
   returnOrderText: {
     fontSize: 14,
-    color: '#3B82F6',
+    color: '#1E3A8A',
     fontWeight: '600',
   },
   sectionTitle: {

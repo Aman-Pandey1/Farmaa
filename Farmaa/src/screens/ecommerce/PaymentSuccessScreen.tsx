@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   continueShoppingText: {
     fontSize: 16,
-    color: '#3B82F6',
+    color: '#1E3A8A',
     fontWeight: '600',
   },
   footer: {

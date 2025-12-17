@@ -39,10 +39,15 @@ import MyBookingsScreen from '../screens/services/MyBookingsScreen';
 import HealthcareScreen from '../screens/healthcare/HealthcareScreen';
 import PetHealthScreen from '../screens/healthcare/PetHealthScreen';
 import VeterinariansScreen from '../screens/healthcare/VeterinariansScreen';
+import VetSearchScreen from '../screens/healthcare/VetSearchScreen';
+import ChangeLocationScreen from '../screens/healthcare/ChangeLocationScreen';
 
 // Training Screens
 import TrainingScreen from '../screens/training/TrainingScreen';
 import TrainingProgramsScreen from '../screens/training/TrainingProgramsScreen';
+import TrainingLessonsScreen from '../screens/training/TrainingLessonsScreen';
+import VideoPlayerScreen from '../screens/training/VideoPlayerScreen';
+import SubscriptionScreen from '../screens/training/SubscriptionScreen';
 
 // Adoption Screens
 import AdoptionScreen from '../screens/adoption/AdoptionScreen';
@@ -52,6 +57,11 @@ import AdoptionFormScreen from '../screens/adoption/AdoptionFormScreen';
 // Social Screens
 import SocialFeedScreen from '../screens/social/SocialFeedScreen';
 import CreatePostScreen from '../screens/social/CreatePostScreen';
+import CommentsScreen from '../screens/social/CommentsScreen';
+import CameraScreen from '../screens/social/CameraScreen';
+import PostVideoScreen from '../screens/social/PostVideoScreen';
+import ViewVideoScreen from '../screens/social/ViewVideoScreen';
+import LikesScreen from '../screens/social/LikesScreen';
 
 // Explore Screen
 import ExploreScreen from '../screens/explore/ExploreScreen';
@@ -62,6 +72,30 @@ import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import MyPetsScreen from '../screens/profile/MyPetsScreen';
 import AddPetScreen from '../screens/profile/AddPetScreen';
 import OrdersScreen from '../screens/profile/OrdersScreen';
+import PetProfileScreen from '../screens/profile/PetProfileScreen';
+import EditPetProfileScreen from '../screens/profile/EditPetProfileScreen';
+import AddPetProfileScreen from '../screens/profile/AddPetProfileScreen';
+
+// AI Chat Screens
+import PetAIChatScreen from '../screens/ai/PetAIChatScreen';
+import ChatHistoryScreen from '../screens/ai/ChatHistoryScreen';
+
+// Hope Screens
+import HopeScreen from '../screens/hope/HopeScreen';
+import HopeDetailScreen from '../screens/hope/HopeDetailScreen';
+import AddHopePostScreen from '../screens/hope/AddHopePostScreen';
+import HopeChatsListScreen from '../screens/hope/HopeChatsListScreen';
+import HopeChatScreen from '../screens/hope/HopeChatScreen';
+import HopeChangeLocationScreen from '../screens/hope/HopeChangeLocationScreen';
+
+// Pet Events Screens
+import PetEventsScreen from '../screens/events/PetEventsScreen';
+import PetEventDetailScreen from '../screens/events/PetEventDetailScreen';
+
+// Cremation Screens
+import CremationScreen from '../screens/cremation/CremationScreen';
+import CremationRequestScreen from '../screens/cremation/CremationRequestScreen';
+import CremationChangeLocationScreen from '../screens/cremation/CremationChangeLocationScreen';
 
 // Emergency Screen
 import EmergencyScreen from '../screens/emergency/EmergencyScreen';
@@ -76,7 +110,7 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#8B5CF6',
+        tabBarActiveTintColor: '#1E3A8A',
         tabBarInactiveTintColor: '#9CA3AF',
         tabBarStyle: {
           paddingBottom: Math.max(insets.bottom, 10),
@@ -100,6 +134,14 @@ const MainTabs = () => {
         options={{
           tabBarLabel: 'Explore',
           tabBarIcon: ({ color }) => <Icon name="explore" size={24} color={color} />,
+        }}
+      />
+      <Tab.Screen 
+        name="TrainTab" 
+        component={TrainingScreen}
+        options={{
+          tabBarLabel: 'Train',
+          tabBarIcon: ({ color }) => <Icon name="train" size={24} color={color} />,
         }}
       />
       <Tab.Screen 
@@ -135,6 +177,7 @@ const Icon = ({ name, size, color }: { name: string; size: number; color: string
   const iconMap: { [key: string]: string } = {
     'shopping-bag': '🛍️',
     explore: '🔍',
+    train: '🐾',
     feed: '📱',
     vet: '👨‍⚕️',
     more: '☰',
@@ -183,18 +226,44 @@ const AppNavigator = () => {
             <Stack.Screen name="MyBookings" component={MyBookingsScreen} />
             <Stack.Screen name="PetHealth" component={PetHealthScreen} />
             <Stack.Screen name="Veterinarians" component={VeterinariansScreen} />
+            <Stack.Screen name="VetSearch" component={VetSearchScreen} />
+            <Stack.Screen name="ChangeLocation" component={ChangeLocationScreen} />
             <Stack.Screen name="TrainingPrograms" component={TrainingProgramsScreen} />
+            <Stack.Screen name="TrainingLessons" component={TrainingLessonsScreen} />
+            <Stack.Screen name="VideoPlayer" component={VideoPlayerScreen} />
+            <Stack.Screen name="Subscription" component={SubscriptionScreen} />
             <Stack.Screen name="PetDetail" component={PetDetailScreen} />
             <Stack.Screen name="AdoptionForm" component={AdoptionFormScreen} />
             <Stack.Screen name="CreatePost" component={CreatePostScreen} />
+            <Stack.Screen name="Comments" component={CommentsScreen} />
+            <Stack.Screen name="Camera" component={CameraScreen} />
+            <Stack.Screen name="PostVideo" component={PostVideoScreen} />
+            <Stack.Screen name="ViewVideo" component={ViewVideoScreen} />
+            <Stack.Screen name="Likes" component={LikesScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="MyPets" component={MyPetsScreen} />
             <Stack.Screen name="AddPet" component={AddPetScreen} />
+            <Stack.Screen name="PetProfile" component={PetProfileScreen} />
+            <Stack.Screen name="EditPetProfile" component={EditPetProfileScreen} />
+            <Stack.Screen name="AddPetProfile" component={AddPetProfileScreen} />
             <Stack.Screen name="Emergency" component={EmergencyScreen} />
             <Stack.Screen name="Healthcare" component={HealthcareScreen} />
             <Stack.Screen name="Training" component={TrainingScreen} />
             <Stack.Screen name="Adoption" component={AdoptionScreen} />
             <Stack.Screen name="Settings" component={ProfileScreen} />
+            <Stack.Screen name="PetAIChat" component={PetAIChatScreen} />
+            <Stack.Screen name="ChatHistory" component={ChatHistoryScreen} />
+            <Stack.Screen name="Hope" component={HopeScreen} />
+            <Stack.Screen name="HopeDetail" component={HopeDetailScreen} />
+            <Stack.Screen name="AddHopePost" component={AddHopePostScreen} />
+            <Stack.Screen name="HopeChats" component={HopeChatsListScreen} />
+            <Stack.Screen name="HopeChat" component={HopeChatScreen} />
+            <Stack.Screen name="HopeChangeLocation" component={HopeChangeLocationScreen} />
+            <Stack.Screen name="PetEvents" component={PetEventsScreen} />
+            <Stack.Screen name="PetEventDetail" component={PetEventDetailScreen} />
+            <Stack.Screen name="Cremation" component={CremationScreen} />
+            <Stack.Screen name="CremationRequest" component={CremationRequestScreen} />
+            <Stack.Screen name="CremationChangeLocation" component={CremationChangeLocationScreen} />
           </>
         )}
       </Stack.Navigator>

@@ -17,6 +17,9 @@ import socialRoutes from './routes/social.routes.js';
 import serviceProviderRoutes from './routes/serviceProvider.routes.js';
 import veterinarianRoutes from './routes/veterinarian.routes.js';
 import adminRoutes from './routes/admin.routes.js';
+import cremationRoutes from './routes/cremation.routes.js';
+import petEventsRoutes from './routes/petEvents.routes.js';
+import hopeRoutes from './routes/hope.routes.js';
 
 dotenv.config();
 
@@ -47,6 +50,9 @@ app.use('/api/social', socialRoutes);
 app.use('/api/service-providers', serviceProviderRoutes);
 app.use('/api/veterinarians', veterinarianRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/cremation', cremationRoutes);
+app.use('/api/pet-events', petEventsRoutes);
+app.use('/api/hope', hopeRoutes);
 
 // Health Check
 app.get('/api/health', (req, res) => {
